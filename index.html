@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-WER | ACTO II - TRANSMUTACIÓN</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="core/css/global-fui.css">
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="screen-intro" class="screen" style="background: #000000; z-index: 3000; display: flex;">
+        <img src="assets/img/logos.png" id="main-logo-intro" alt="M-WER Logos" style="width: 280px; opacity: 0; filter: drop-shadow(0 0 12px var(--neon-green));">
+    </div>
+
+    <div id="screen-start" class="screen" style="background: rgba(3, 5, 6, 0.99); z-index: 2000;">
+        <div style="text-align: center;">
+            <h1 style="color: var(--neon-green); font-size: 5.5rem; font-weight: 900; letter-spacing: 4px; margin: 0; line-height: 1; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4);">ACTO II</h1>
+            <h3 style="color: var(--cyber-purple); opacity: 0.85; margin: 15px 0 45px 0; font-size: 1.1rem; letter-spacing: 5px; font-weight: normal; text-transform: uppercase;">EL RASTRO BIOLÓGICO</h3>
+            <button id="main-start-btn" class="btn-fui green-accent" style="opacity: 0; pointer-events: none;" onclick="startActo2()">START</button>
+        </div>
+    </div>
+
+    <div id="screen-device-boot" class="screen" style="background: #030506; z-index: 1500;">
+        <div style="text-align: center; width: 80%; max-width: 300px;">
+            <p id="boot-status-text" style="font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--neon-green); letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase;">INITIALIZING DEVICE...</p>
+            <div class="progress-bar-container" style="border-color: rgba(0, 255, 102, 0.2); height: 4px;">
+                <div id="boot-progress-fill" style="width: 0%; height: 100%; background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-mobile" class="screen">
+        <div id="mobile-frame">
+            <div class="grid-bg"></div>
+            
+            <div class="status-bar">
+                <span id="clock">00:00</span>
+                <span style="font-weight: bold; color: var(--neon-green);">IN-BOOTH</span>
+                <span>📶 5G_EXT</span>
+            </div>
+
+            <div class="display-content">
+                
+                <div id="view-agent-msg" class="mobile-view active">
+                    <div class="square-media">
+                        <img src="assets/img/agente.png" alt="Agente R-BTU">
+                    </div>
+                    <h2 style="font-size: 0.95rem; color: var(--neon-green); margin: 10px 0 25px 0; font-weight: normal; letter-spacing: 1px;">AGENTE R-BTU</h2>
+                    <button class="btn-fui" style="font-size: 0.75rem;" onclick="openNarration()">VER MENSAJE</button>
+                </div>
+
+                <div id="view-narration-panel" class="mobile-view">
+                    <div id="narration-title" style="font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--neon-green); letter-spacing: 2px; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; text-shadow: 0 0 8px rgba(0, 255, 102, 0.3);">AGENTE R-BTU</div>
+                    <div id="narration-text"></div>
+                    <button id="btn-next-narration" class="btn-fui green-accent" style="display: none; font-size: 0.75rem; margin-top: 20px;" onclick="showInstallPrompt()">SIGUIENTE</button>
+                </div>
+
+                <div id="view-install" class="mobile-view">
+                    <div class="apk-icon-graphic">☣️</div>
+                    <h2 style="font-size: 0.96rem; margin-bottom: 6px; color: #ffffff; font-weight: normal;">Instalar Encriptador</h2>
+                    <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 35px;">Origen: Desconocido (R-BTU)</p>
+                    <button class="btn-fui" style="font-size: 0.75rem; color: var(--glitch-red); border-color: var(--glitch-red);" onclick="startLoadingInstall()">INSTALAR DE TODOS MODOS</button>
+                </div>
+
+                <div id="view-loading-install" class="mobile-view">
+                    <p style="font-size: 0.8rem; margin-bottom: 15px; color: var(--neon-green); letter-spacing: 1px;">Instalando paquete de datos...</p>
+                    <div class="progress-bar-container">
+                        <div id="install-progress-fill"></div>
+                    </div>
+                </div>
+
+                <div id="view-home" class="mobile-view">
+                    <p style="font-size: 0.65rem; opacity: 0.5; letter-spacing: 1px; margin-bottom: 30px;">SISTEMA ACTUALIZADO</p>
+                    <button class="btn-search-circular" onclick="openEncryptionApp()">🧬</button>
+                    <p style="font-size: 0.7vh; margin-top: 14px; color: var(--neon-green); letter-spacing: 1px;">Bio-Encrypt</p>
+                </div>
+
+                <div id="view-app-fingerprint" class="mobile-view">
+                    <h2 style="font-size: 0.8rem; margin-bottom: 15px; color: var(--neon-green); font-weight: normal; letter-spacing: 1px;">ENCRIPTAR DATOS BIOMÉTRICOS</h2>
+                    <p style="font-size: 0.75rem; margin-bottom: 20px; line-height: 1.5; opacity: 0.75; padding: 0 10px;">
+                        Mantén presionado tu dedo sobre el sensor para escanear y cifrar los vectores biológicos humanos.
+                    </p>
+                    <div class="fingerprint-scanner" id="fp-scanner" onpointerdown="startFingerprintScan()" onpointerup="stopFingerprintScan()" onpointerleave="stopFingerprintScan()">
+                        <svg class="fui-biometric-svg" viewBox="0 0 100 100">
+                            <path d="M 50 15 A 35 35 0 0 1 85 50 A 35 45 0 0 1 50 95" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="1 4" />
+                            <path d="M 50 23 A 27 27 0 0 1 77 50 A 27 35 0 0 1 50 85 A 27 35 0 0 1 23 50" fill="none" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M 50 32 A 18 18 0 0 1 68 50 A 18 25 0 0 1 50 75 A 18 25 0 0 1 32 50" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 3" />
+                            <path d="M 50 40 A 10 10 0 0 1 60 50 A 10 15 0 0 1 50 65 A 10 15 0 0 1 40 50 A 10 10 0 0 1 50 40" fill="none" stroke-width="2" stroke-linecap="round" />
+                            <path d="M 15 50 A 35 35 0 0 1 45 16" fill="none" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M 26 65 A 30 35 0 0 0 50 78" fill="none" stroke-width="2" stroke-linecap="round" />
+                            <path d="M 74 65 A 30 35 0 0 1 50 82" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+                        </svg>
+                        <div class="scan-line-circle" id="fp-line"></div>
+                    </div>
+                    
+                    <div id="popup-fp-complete" class="popup-internal hidden" style="position: absolute; bottom: 30px;">
+                        <p style="font-size: 0.75rem; color: var(--neon-green); margin-bottom: 15px; letter-spacing: 1px;">ESCANEO COMPLETO</p>
+                        <button class="btn-fui" style="font-size: 0.7rem; width: 100%; padding: 10px;" onclick="goToFaceScan()">CONTINUAR</button>
+                    </div>
+                </div>
+
+                <div id="view-face-scan" class="mobile-view">
+                    <h2 style="font-size: 0.8rem; margin-bottom: 15px; color: var(--neon-green); font-weight: normal; letter-spacing: 1px;">RASGOS FACIALES</h2>
+                    <div id="camera-container">
+                        <video id="webcam" autoplay playsinline></video>
+                        <div class="face-overlay"></div>
+                        <div class="scan-bar" id="face-scan-bar"></div>
+                        <div id="face-recognized-icon" class="biomorphic-hud-icon" style="display: none;">
+                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                <path d="M50 15 C30 15, 22 32, 22 55 C22 75, 38 88, 50 88 C62 88, 78 75, 78 55 C78 32, 70 15, 50 15 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <polygon points="36,48 44,52 38,58" fill="currentColor"/>
+                                <polygon points="64,48 56,52 62,58" fill="currentColor"/>
+                                <path d="M42 72 Q50 76 58 72" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <line x1="50" y1="15" x2="50" y2="5" stroke="currentColor" stroke-width="1.5"/>
+                                <line x1="22" y1="55" x2="12" y2="55" stroke="currentColor" stroke-width="1.5"/>
+                                <line x1="78" y1="55" x2="88" y2="55" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <button id="btn-start-face-scan" class="btn-fui" style="margin-top: 25px; font-size: 0.75rem;" onclick="runFaceScan()">ESCANEAR</button>
+                    
+                    <div id="popup-encrypt-final" class="popup-internal hidden" style="position: absolute; top: 50%; transform: translateY(-50%);">
+                        <p style="font-size: 0.75rem; color: var(--neon-green); margin-bottom: 15px; line-height: 1.4;">Rastro biológico aislado.<br>¿Proceder con la transmutación?</p>
+                        <button class="btn-fui green-accent" style="font-size: 0.75rem; width: 100%;" onclick="startFinalTransformation()">ENCRIPTAR</button>
+                    </div>
+                </div>
+
+                <div id="view-transformation" class="mobile-view" style="justify-content: flex-start; padding-top: 20px;">
+                    <p style="font-size: 0.75rem; color: var(--cyber-purple); letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase;">TRANSMUTANDO VECTOR VIVO...</p>
+                    
+                    <div class="alien-transformation-wrapper">
+                        <div class="alien-container">
+                            <div class="alien-icon-bg">
+                                <svg viewBox="0 0 100 100" style="width:100%; height:100%;">
+                                    <path d="M50 15 C30 15, 22 32, 22 55 C22 75, 38 88, 50 88 C62 88, 78 75, 78 55 C78 32, 70 15, 50 15 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                                    <polygon points="36,48 44,52 38,58" fill="currentColor"/>
+                                    <polygon points="64,48 56,52 62,58" fill="currentColor"/>
+                                    <path d="M42 72 Q50 76 58 72" fill="none" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div id="alien-fill-icon" class="alien-fill">
+                                <svg viewBox="0 0 100 100" style="width:100%; height:100%;">
+                                    <path d="M50 15 C30 15, 22 32, 22 55 C22 75, 38 88, 50 88 C62 88, 78 75, 78 55 C78 32, 70 15, 50 15 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                                    <polygon points="36,48 44,52 38,58" fill="currentColor"/>
+                                    <polygon points="64,48 56,52 62,58" fill="currentColor"/>
+                                    <path d="M42 72 Q50 76 58 72" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="transform-percent" style="font-size: 1.4rem; color: var(--cyber-purple); font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 8px rgba(189, 0, 255, 0.4);">0%</div>
+                    <button id="btn-transmutar" class="btn-fui purple-accent" style="display: none; font-size: 0.75rem; width: 80%;" onclick="showBadgePanel()">TRANSMUTAR</button>
+                </div>
+
+                <div id="view-badge-panel" class="mobile-view" style="justify-content: center; padding: 0 10px;">
+                    <div class="input-badge-container" style="width: 100%; text-align: center;">
+                        <h2 style="font-size: 1.1rem; color: var(--cyber-purple); font-weight: normal; letter-spacing: 2px; margin-bottom: 14px; text-transform: uppercase; text-shadow: 0 0 8px rgba(189, 0, 255, 0.3);">INTRODUCE TU NOMBRE DE ALIEN</h2>
+                        <p style="font-size: 0.75rem; color: #ffffff; opacity: 0.7; line-height: 1.5; margin-bottom: 35px; padding: 0 5px; letter-spacing: 0.5px;">
+                            Para completar la transmutación, ingresa el nombre con el que quieres ser conocido en la colonia:
+                        </p>
+                        
+                        <input type="text" id="alien-name-input" placeholder="EJE: KRONOS_666" maxlength="15" autocomplete="off" style="margin-bottom: 30px;">
+                        <button class="btn-fui green-accent" style="font-size: 0.75rem; width: 90%; padding: 14px 0;" onclick="downloadBadge()">DESCARGAR INSIGNIA</button>
+                    </div>
+                </div>
+
+                <div id="view-social-cta" class="mobile-view">
+                    <h2 style="font-size: 0.85rem; color: var(--neon-green); margin-bottom: 20px; font-weight: normal; letter-spacing: 1px;">INSIGNIA OBTENIDA</h2>
+                    <p style="font-size: 0.75rem; line-height: 1.5; padding: 0 10px; margin-bottom: 30px; opacity: 0.8;">
+                        Para habilitar el acceso al siguiente nodo de la colonia, publica la insignia en tus historias de IG.
+                    </p>
+                    <div style="font-size: 0.85rem; color: var(--neon-green); line-height: 1.8; letter-spacing: 1px;">
+                        ETIQUETA A:<br>
+                        <span class="ig-link" onclick="window.open('https://instagram.com/malwer.co', '_blank')">@malwer.co</span><br>
+                        <span class="ig-link" onclick="window.open('https://instagram.com/in_booth.xp', '_blank')">@in_booth.xp</span>
+                    </div>
+                    <p style="font-size: 0.55rem; opacity: 0.35; margin-top: 45px; letter-spacing: 1px;">SISTEMA EN ESPERA DE VALIDACIÓN SOCIAL...</p>
+                </div>
+
+            </div> 
+        </div> 
+    </div>
+
+    <div id="badge-holding-tank" style="position: absolute; left: -9999px; top: -9999px; pointer-events: none;">
+        <div id="badge-to-download" class="instagram-badge-canvas">
+            
+            <div class="corp-grid-layer"></div>
+            <div class="hud-bracket top-left"></div>
+            <div class="hud-bracket top-right"></div>
+            <div class="hud-bracket bottom-left"></div>
+            <div class="hud-bracket bottom-right"></div>
+            
+            <div class="badge-top-ticker">
+                <span>SECURITY LEVEL: 04 // TOP CLASSIFIED APPLICATION</span>
+                <span>SYS_STATUS: ACTIVE</span>
+            </div>
+
+            <div class="badge-header-pro">
+                <div class="header-main-title">M-WER COLONY ACQUISITION</div>
+                <div class="header-sub-protocol">DOCUMENT PROTOCOL // IDENTITY OVERRIDE</div>
+                <div class="header-line-separator"></div>
+            </div>
+
+            <div class="badge-body-pro">
+                
+                <div class="document-title-block">
+                    <div class="badge-diploma-text-top">CERTIFICADO OFICIAL DE TRANSMUTACIÓN</div>
+                    <div class="doc-serial-number">REGISTRY ID // MWC-2026-AX7-114</div>
+                    <div class="doc-event-title">06.06.06 - RABTEU Y VCL</div>
+                </div>
+
+                <div class="alien-emblem-container">
+                    <div class="emblem-outer-ring"></div>
+                    <div class="emblem-scan-overlay"></div>
+                    <div class="emblem-biometric-nodes">
+                        <div class="node-dot p1"></div>
+                        <div class="node-dot p2"></div>
+                        <div class="node-dot p3"></div>
+                        <div class="node-dot p4"></div>
+                    </div>
+                    <div id="badge-alien-photo" class="emblem-svg-core"></div>
+                </div>
+
+                <div class="identity-display-module">
+                    <div class="id-label-prefix">SPECIMEN COGNOMEN //</div>
+                    <div id="alien-name-output" class="alien-name-display-large">AZULITO</div>
+                </div>
+
+                <div class="technical-data-matrix">
+                    <div class="matrix-row">
+                        <span class="m-label">CLASSIFICATION:</span>
+                        <span class="m-value purple-highlight">ESPECÍMEN CLASE A</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="m-label">HUMAN CORE STATUS:</span>
+                        <span class="m-value alert-highlight">IDENTIDAD HUMANA REVOCADA</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="m-label">ASSIGNED RANG:</span>
+                        <span class="m-value green-highlight">ALIEN INTEGRATE</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="m-label">INTEGRATION LEVEL:</span>
+                        <span class="m-value green-highlight">100% // INTEGRATED</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="badge-authenticity-footer">
+                
+                <div class="auth-left-column">
+                    <div class="holographic-seal-mock">
+                        <div class="seal-inner-grid"></div>
+                        <span class="seal-text">M-WER<br>VALID</span>
+                    </div>
+                    <div class="protocol-signature-block">
+                        <div class="signature-line">PROTOCOL_AUTH_EXEC_ // TIMELOCK_2026</div>
+                        <div class="signature-title">M-WER COLONY AUTHORITY</div>
+                    </div>
+                </div>
+
+                <div class="auth-right-column">
+                    <div class="tech-barcode-graphic">
+                        <div class="bar text-w"></div><div class="bar text-n"></div><div class="bar text-w"></div><div class="bar text-w"></div>
+                        <div class="bar text-n"></div><div class="bar text-w"></div><div class="bar text-n"></div><div class="bar text-w"></div>
+                        <div class="bar text-w"></div><div class="bar text-n"></div><div class="bar text-n"></div><div class="bar text-w"></div>
+                    </div>
+                    <div class="footer-instagram-handles">
+                        COLONY_CHANNELS // <span class="footer-ig-tag">@malwer.co</span><br>
+                        NODE_INDEX // <span class="footer-ig-tag">@in_booth.xp</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div id="audio-interface">
+        <div class="player-panel">
+            <div style="display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--neon-green); opacity: 0.6; letter-spacing: 1px;">
+                <span>STATUS: SIGNAL_CONNECTED</span>
+                <span id="vol-display">40%</span>
+            </div>
+            <div style="font-size: 0.65rem; color: #666666; margin: 2px 0; letter-spacing: 0.5px;">TRACK // ACTO_II_ATMOSPHERE</div>
+            <div style="display: flex; align-items: center; margin-top: 4px;">
+                <input type="range" id="master-vol-slider" min="0" max="1" step="0.01" value="0.4">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="core/js/engine-three.js"></script>
+</body>
+</html>
