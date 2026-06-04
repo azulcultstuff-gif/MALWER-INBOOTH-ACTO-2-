@@ -1,6 +1,3 @@
-/* ==========================================================================
-   M-WER | ACTO II - SISTEMA DE ESTILOS RADICAL: VERDE & MORADO NEÓN (FUI)
-   ========================================================================== */
 
 :root {
     --neon-green: #00ff66;
@@ -420,9 +417,7 @@ body, html {
     box-shadow: 0 0 6px var(--cyber-purple);
 }
 
-/* ==========================================================================
-   MOTOR DE DISEÑO PREMIUM DE LA INSIGNIA: DOCUMENTO OFICIAL DE LA COLONIA
-   ========================================================================== */
+
 .instagram-badge-canvas {
     width: 1080px;
     height: 1920px;
@@ -451,7 +446,7 @@ body, html {
     pointer-events: none;
 }
 
-/* Brackets Instrumentales Perimetrales (Efecto HUD de Alta Tecnología) */
+
 .hud-bracket {
     position: absolute;
     width: 55px;
@@ -465,7 +460,7 @@ body, html {
 .hud-bracket.bottom-left { bottom: 250px; left: 45px; border-width: 0 0 2px 2px; }
 .hud-bracket.bottom-right { bottom: 250px; right: 45px; border-width: 0 2px 2px 0; }
 
-/* Cintillo Superior de Metadatos */
+
 .badge-top-ticker {
     display: flex;
     justify-content: space-between;
@@ -479,7 +474,7 @@ body, html {
     margin-bottom: 30px;
 }
 
-/* Encabezado Institucional Organizado */
+
 .badge-header-pro {
     text-align: center;
     width: 100%;
@@ -507,7 +502,7 @@ body, html {
     margin-top: 35px;
 }
 
-/* Cuerpo de Documentación Técnica */
+
 .badge-body-pro {
     width: 100%;
     display: flex;
@@ -541,7 +536,7 @@ body, html {
     font-weight: bold;
 }
 
-/* Símbolo de Clasificación Avanzado (Emblema de Anillos Concéntricos) */
+
 .alien-emblem-container {
     width: 360px;
     height: 360px;
@@ -592,7 +587,7 @@ body, html {
     justify-content: center;
 }
 
-/* Bloque Despliegue de la Identidad */
+
 .identity-display-module {
     text-align: center;
     width: 100%;
@@ -617,7 +612,7 @@ body, html {
     background: rgba(189, 0, 255, 0.03);
 }
 
-/* Grilla de Datos de Acreditación */
+
 .technical-data-matrix {
     width: 100%;
     max-width: 780px;
@@ -648,7 +643,7 @@ body, html {
 .alert-highlight { color: #ff3b47; }
 .green-highlight { color: var(--neon-green); }
 
-/* Pie de Página de Autenticidad y Zona Segura para Instagram Stories */
+
 .badge-authenticity-footer {
     width: 100%;
     display: flex;
